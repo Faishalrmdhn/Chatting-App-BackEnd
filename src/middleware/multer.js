@@ -1,34 +1,35 @@
 const multer = require("multer");
-const path = require("path");
 const helper = require("../helper/helper");
-
 const storage = multer.diskStorage({
   destination: (request, file, callback) => {
-    callback(null, "./uploads");
+    callback(null, "./uploads/");
   },
   filename: (request, file, callback) => {
     callback(
       null,
-      new Date().toISOString().replace(/:/g, "-") + "-" + file.originalname
+      file.fieldname +
+        "-" +
+        new Date().toISOString().replace(/:/g, "-") +
+        "-" +
+        file.originalname
     );
   },
 });
 
 const fileFilter = (request, file, callback) => {
-  const ext = path.extname(file.originalname);
-  if (ext !== ".png" && ext !== ".jpg" && ext !== ".jpeg") {
-    return callback(new Error("Only images are allowed"), false);
-  } else {
+  if (file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
     callback(null, true);
+  } else {
+    return callback(
+      new Error("Only support for JPEG and PNG File Extension"),
+      false
+    );
   }
 };
 
-const maxSize = 1 * 1024 * 1024;
-const upload = multer({
-  storage,
-  fileFilter,
-  limits: { fileSize: maxSize },
-}).single("user_image");
+const limits = { fileSize: 1024 * 1024 * 2 };
+
+let upload = multer({ storage, fileFilter, limits }).single("profileImage");
 
 const uploadFilter = (request, response, next) => {
   upload(request, response, function (err) {

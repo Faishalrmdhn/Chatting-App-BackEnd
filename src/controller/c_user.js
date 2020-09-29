@@ -1,7 +1,7 @@
 const bcrypt = require("bcrypt");
 const helper = require("../helper/helper.js");
 const jwt = require("jsonwebtoken");
-const fs = require("fs");
+// const fs = require("fs");
 const nodemailer = require("nodemailer");
 const {
   postUser,
@@ -268,7 +268,8 @@ module.exports = {
         user_name,
         user_phone,
         user_bio,
-        user_location,
+        user_lat,
+        user_lng,
         // user_document,
       } = request.body;
 
@@ -277,7 +278,8 @@ module.exports = {
         user_phone,
         profileImage: request.file === undefined ? "" : request.file.filename,
         user_bio,
-        user_location,
+        user_lat,
+        user_lng,
         // user_document,
         user_updated_at: new Date(),
       };
@@ -288,15 +290,16 @@ module.exports = {
       // }
 
       const checkId = await getUserById(id);
+      console.log(checkId.length);
       let fs = require("fs");
       if (checkId.length > 0) {
-        const result = await patchProduct(setData, id);
+        const result = await patchUser(updateData, id);
 
         fs.unlink(`./uploads/${checkId[0].profileImage}`, function (err) {
           if (err) throw err;
           console.log("file deleted...");
         });
-        return helper.response(response, 201, "Product Updated", result);
+        return helper.response(response, 201, "User Updated", result);
       } else {
         return helper.response(response, 404, `User by Id ${id} not found!`);
       }

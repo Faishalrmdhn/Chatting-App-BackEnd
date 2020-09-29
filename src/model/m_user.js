@@ -46,15 +46,15 @@ module.exports = {
       );
     });
   },
-  patchUser: (data, id) => {
+  patchUser: (updateData, id) => {
     return new Promise((resolve, reject) => {
       connection.query(
         "UPDATE user SET ? WHERE user_id = ?",
-        [data, id],
+        [updateData, id],
         (error, result) => {
           if (!error) {
             const newResult = {
-              ...data,
+              ...updateData,
             };
             resolve(newResult);
           } else {
