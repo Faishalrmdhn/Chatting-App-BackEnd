@@ -10,7 +10,7 @@ connection.connect((error) => {
   if (error) {
     throw error;
   }
-  console.log("You are now conected ...");
+  console.log("MySQL now connected ...");
 });
 
 module.exports = connection;

@@ -12,6 +12,7 @@ const {
   getUserByIdV2,
   searchUserByName,
   searchUserByEmail,
+  searchUserFriendList,
 } = require("../model/m_user");
 
 module.exports = {
@@ -246,16 +247,16 @@ module.exports = {
     }
   },
   getUserByEmail: async (request, response) => {
-    const { user_email } = request.body;
+    const { user_email } = request.query;
 
     try {
       let result = await searchUserByEmail(user_email);
       console.log(result);
-      // if (result.length > 0) {
-      //   return helper.response(response, 200, "Success Get Data User", result);
-      // } else {
-      //   return helper.response(response, 404, "User not found!");
-      // }
+      if (result.length > 0) {
+        return helper.response(response, 200, "Success Get Data User", result);
+      } else {
+        return helper.response(response, 404, "User not found!");
+      }
     } catch (error) {
       return helper.response(response, 200, "Bad request", error);
     }
@@ -266,66 +267,70 @@ module.exports = {
       const {
         user_name,
         user_phone,
-        user_job_desk,
+        user_bio,
         user_location,
-        user_workplace,
-        user_about,
-        user_instagram,
-        user_github,
+        // user_document,
       } = request.body;
-      const profileImage = request.file;
-      let updateData = {
+      const user_image = request.file;
+      const updateData = {
         user_name,
         user_phone,
-        user_job_desk,
+        user_bio,
         user_location,
-        user_workplace,
-        user_about,
-        user_instagram,
-        user_github,
+        // user_document,
         user_updated_at: new Date(),
       };
       if (user_name === "") {
         return helper.response(response, 400, "Name cannot be empty");
       } else if (user_phone === "") {
         return helper.response(response, 400, "Phone cannot be empty");
-      } else if (user_job_desk === "") {
-        return helper.response(response, 400, "Job desk cannot be empty");
-      } else if (user_location === "") {
-        return helper.response(response, 400, "Location cannot be empty");
-      } else if (user_workplace === "") {
-        return helper.response(response, 400, "Workplace cannot be empty");
-      } else if (user_about === "") {
-        return helper.response(response, 400, "Work place cannot be empty");
       }
 
       const checkId = await getUserById(id);
       if (checkId.length > 0) {
-        if (profileImage === "" || profileImage === undefined) {
+        if (user_image === "" || user_image === undefined) {
           updateData = updateData;
         } else {
-          updateData.user_image = profileImage.filename;
+          updateData.user_image = user_image.filename;
           if (checkId[0].user_image !== null) {
-            fs.unlink(
-              `./uploads/profile/${checkId[0].user_image}`,
-              async (error) => {
-                if (error) throw err;
-              }
-            );
+            fs.unlink(`./uploads/${checkId[0].user_image}`, async (error) => {
+              if (error) throw error;
+            });
           }
         }
         const result = await patchUser(updateData, id);
-        return helper.response(
-          response,
-          200,
-          "Data successfully updated",
-          result
-        );
+        console.log(result);
+        // return helper.response(
+        //   response,
+        //   200,
+        //   "Data successfully updated",
+        //   result
+        // );
       } else {
         return helper.response(response, 404, `User by Id ${id} not found!`);
       }
     } catch (error) {
       return helper.response(response, 400, "Bad Request");
+    }
+  },
+  getUserFriend: async (request, response) => {
+    const { user_id } = request.body;
+
+    try {
+      let result = await searchUserFriendList(user_id);
+      console.log(result);
+      if (result.length > 0) {
+        return helper.response(
+          response,
+          200,
+          "Success Get Data Friend List",
+          result
+        );
+      } else {
+        return helper.response(response, 404, "You don't have friend yet");
+      }
+    } catch (error) {
+      return helper.response(response, 400, "Bad request", error);
     }
   },
 };
