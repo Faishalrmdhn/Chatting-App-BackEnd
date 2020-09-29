@@ -271,41 +271,32 @@ module.exports = {
         user_location,
         // user_document,
       } = request.body;
-      const user_image = request.file;
+
       const updateData = {
         user_name,
         user_phone,
+        profileImage: request.file === undefined ? "" : request.file.filename,
         user_bio,
         user_location,
         // user_document,
         user_updated_at: new Date(),
       };
-      if (user_name === "") {
-        return helper.response(response, 400, "Name cannot be empty");
-      } else if (user_phone === "") {
-        return helper.response(response, 400, "Phone cannot be empty");
-      }
+      // if (user_name === "") {
+      //   return helper.response(response, 400, "Name cannot be empty");
+      // } else if (user_phone === "") {
+      //   return helper.response(response, 400, "Phone cannot be empty");
+      // }
 
       const checkId = await getUserById(id);
+      let fs = require("fs");
       if (checkId.length > 0) {
-        if (user_image === "" || user_image === undefined) {
-          updateData = updateData;
-        } else {
-          updateData.user_image = user_image.filename;
-          if (checkId[0].user_image !== null) {
-            fs.unlink(`./uploads/${checkId[0].user_image}`, async (error) => {
-              if (error) throw error;
-            });
-          }
-        }
-        const result = await patchUser(updateData, id);
-        console.log(result);
-        // return helper.response(
-        //   response,
-        //   200,
-        //   "Data successfully updated",
-        //   result
-        // );
+        const result = await patchProduct(setData, id);
+
+        fs.unlink(`./uploads/${checkId[0].profileImage}`, function (err) {
+          if (err) throw err;
+          console.log("file deleted...");
+        });
+        return helper.response(response, 201, "Product Updated", result);
       } else {
         return helper.response(response, 404, `User by Id ${id} not found!`);
       }
