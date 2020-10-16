@@ -9,6 +9,7 @@ const {
   getUserByName,
   getUserByEmail,
   getUserFriend,
+  patchImageUser
 } = require("../controller/c_user");
 
 const uploadImage = require("../middleware/multer");
@@ -22,6 +23,7 @@ router.post("/login", loginUser);
 router.post("/register", registerUser);
 router.post("/forgot-password", forgotPassword);
 router.patch("/update-password", updatePassword);
-router.patch("/:id", uploadImage, patchDataUser);
+router.patch("/:id", patchDataUser);
+router.patch('/image/:id', uploadImage, patchImageUser)
 
 module.exports = router;

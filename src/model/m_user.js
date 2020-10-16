@@ -46,15 +46,15 @@ module.exports = {
       );
     });
   },
-  patchUser: (updateData, id) => {
+  patchUser: (setData, id) => {
     return new Promise((resolve, reject) => {
       connection.query(
         "UPDATE user SET ? WHERE user_id = ?",
-        [updateData, id],
+        [setData, id],
         (error, result) => {
           if (!error) {
             const newResult = {
-              ...updateData,
+              ...setData,
             };
             resolve(newResult);
           } else {
@@ -64,18 +64,25 @@ module.exports = {
       );
     });
   },
+  // patchUser: (updateData, id) => {
+  //   return new Promise((resolve, reject) => {
+  //     connection.query(
+  //       "UPDATE user SET ? WHERE user_id = ?",
+  //       [updateData, id],
+  //       (error, result) => {
+  //         if (!error) {
+  //           const newResult = {
+  //             ...updateData,
+  //           };
+  //           resolve(newResult);
+  //         } else {
+  //           reject(new Error(error));
+  //         }
+  //       }
+  //     );
+  //   });
+  // },
   getUserById: (id) => {
-    return new Promise((resolve, reject) => {
-      connection.query(
-        "SELECT * FROM user WHERE user_id = ?",
-        id,
-        (error, result) => {
-          !error ? resolve(result) : reject(new Error(error));
-        }
-      );
-    });
-  },
-  getUserByIdV2: (id) => {
     return new Promise((resolve, reject) => {
       connection.query(
         "SELECT * FROM user WHERE user_id = ?",

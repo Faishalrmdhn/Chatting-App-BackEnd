@@ -1,7 +1,7 @@
 const bcrypt = require("bcrypt");
 const helper = require("../helper/helper.js");
 const jwt = require("jsonwebtoken");
-// const fs = require("fs");
+const fs = require("fs");
 const nodemailer = require("nodemailer");
 const {
   postUser,
@@ -9,7 +9,6 @@ const {
   checkKey,
   patchUser,
   getUserById,
-  getUserByIdV2,
   searchUserByName,
   searchUserByEmail,
   searchUserFriendList,
@@ -210,7 +209,7 @@ module.exports = {
   getUserById: async (request, response) => {
     try {
       const { id } = request.params;
-      const result = await getUserByIdV2(id);
+      const result = await getUserById(id);
       // const skills = await getWorkerSkills(id);
       // const portofolio = await getPortofolioByUserId(id);
       // const experience = await getExperienceById(id);
@@ -273,16 +272,16 @@ module.exports = {
         // user_document,
       } = request.body;
 
-      const updateData = {
+      const setData = {
         user_name,
         user_phone,
-        profileImage: request.file === undefined ? "" : request.file.filename,
         user_bio,
         user_lat,
         user_lng,
         // user_document,
         user_updated_at: new Date(),
       };
+
       // if (user_name === "") {
       //   return helper.response(response, 400, "Name cannot be empty");
       // } else if (user_phone === "") {
@@ -291,21 +290,51 @@ module.exports = {
 
       const checkId = await getUserById(id);
       console.log(checkId.length);
-      let fs = require("fs");
-      if (checkId.length > 0) {
-        const result = await patchUser(updateData, id);
 
-        fs.unlink(`./uploads/${checkId[0].profileImage}`, function (err) {
-          if (err) throw err;
-          console.log("file deleted...");
-        });
-        return helper.response(response, 201, "User Updated", result);
+      if (checkId.length > 0) {
+        if (user_name === '') {
+          return helper.response(response, 404, 'User name cannot be empty!')
+        } else {
+          const result = await patchUser(setData, id);
+          return helper.response(response, 201, "User Updated", result);
+        }
+
       } else {
         return helper.response(response, 404, `User by Id ${id} not found!`);
       }
     } catch (error) {
       return helper.response(response, 400, "Bad Request");
     }
+  },
+  patchImageUser: async (request, response) => {
+    const { id } = request.params
+    try {
+      const setData = {
+        profileImage: request.file === undefined ? "" : request.file.filename,
+      }
+      const checkId = await getUserById(id)
+
+      if (checkId.length > 0) {
+
+        if (checkId[0].profileImage === null || checkId[0].profileImage === "default.png" || request.file === undefined) {
+          setData = setData
+        } else {
+          fs.unlink(`./uploads/${checkId[0].profileImage}`, async (error) => {
+            if (error) {
+              throw error;
+            } else {
+              const result = await patchUser(setData, id);
+              console.log(result)
+              return helper.response(response, 201, "Profile Updated", result);
+            }
+          });
+        }
+      }
+    } catch (error) {
+      console.log(error)
+      return helper.response(response, 400, "Bad Request", error);
+    }
+
   },
   getUserFriend: async (request, response) => {
     const { user_id } = request.body;
