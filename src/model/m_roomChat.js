@@ -38,4 +38,21 @@ module.exports = {
       );
     });
   },
+  getRoomByKey: (uniqueKey) => {
+    return new Promise((resolve, reject) => {
+      connection.query(
+        `SELECT * from room where room_chat_id = ${uniqueKey}`,
+        (error, result) => {
+          !error ? resolve(result) : reject(new Error(error));
+        }
+      );
+    });
+  },
+  checkRoomById: (room_chat_id) => {
+    return new Promise((resolve, reject) => {
+      connection.query(`SELECT * from room where room_chat_id = ${room_chat_id} `, (error, result) => {
+        !error ? resolve(result) : reject(new Error(error))
+      })
+    })
+  }
 };

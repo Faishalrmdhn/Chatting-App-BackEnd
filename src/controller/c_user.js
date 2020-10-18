@@ -313,11 +313,11 @@ module.exports = {
         profileImage: request.file === undefined ? "" : request.file.filename,
       }
       const checkId = await getUserById(id)
-
+      // console.log(checkId)
       if (checkId.length > 0) {
-
-        if (checkId[0].profileImage === null || checkId[0].profileImage === "default.png" || request.file === undefined) {
-          setData = setData
+        if (checkId[0].profileImage === '' || checkId[0].profileImage === "default.png" || request.file === undefined) {
+          const result = await patchUser(setData, id);
+          return helper.response(response, 201, "Profile Updated", result);
         } else {
           fs.unlink(`./uploads/${checkId[0].profileImage}`, async (error) => {
             if (error) {
