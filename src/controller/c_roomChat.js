@@ -1,6 +1,6 @@
 const helper = require("../helper/helper");
-const { getAllRoom, getRoomById, postRoom, getRoomByKey, checkRoomById } = require("../model/m_roomChat");
-
+const { getAllRoom, getRoomById, postRoom, checkRoomByKey, checkRoomById, getChatByUserId,getMessageChatByRoom, postChat } = require("../model/m_roomChat");
+const {getUserById} = require('../model/m_user')
 module.exports = {
   getAllRoom: async (request, response) => {
     const { user_id } = request.body;
@@ -57,7 +57,7 @@ module.exports = {
     };
 
     try {
-      const checkRoom = await getRoomByKey(uniqueKey)
+      const checkRoom = await checkRoomByKey(uniqueKey)
       // console.log(checkRoom.length)
       // console.log(result)
       // console.log(result2)
@@ -92,5 +92,33 @@ module.exports = {
       console.log(error)
       return helper.response(response, 404, "Bad Request", error);
     }
-  }
+  },
+  getRoomChat: async (request, response) => {
+    const {id} = request.params
+    const checkRoom = await checkRoomById(id)
+    // console.log(checkRoom)
+    if (checkRoom.length > 0) {
+      const getData = await getChatByUserId(id);
+
+      for (i = 0; i < getData.length; i++) {
+        const getSender = await getUserById(getData[i].user_id);
+        getData[i].sender = getSender[0].user_name;
+      }
+console.log(checkRoom)
+      checkRoom[0].chat = getData;
+      return helper.response(
+        response,
+        200,
+        `Success get room chat by ID ${id}`,
+        checkRoom
+      );
+    }
+    // try {
+    //   const resultGetRoom = await getAllRoom(user_id);
+    //   // console.log(resultGetRoom);
+    //   return helper.response(response, 200, "Success Get Room!", resultGetRoom);
+    // } catch (error) {
+    //   return helper.response(response, 400, "Bad Request");
+    // }
+  },
 };

@@ -38,7 +38,7 @@ module.exports = {
       );
     });
   },
-  getRoomByKey: (uniqueKey) => {
+  checkRoomByKey: (uniqueKey) => {
     return new Promise((resolve, reject) => {
       connection.query(
         `SELECT * from room where room_chat_id = ${uniqueKey}`,
@@ -54,5 +54,38 @@ module.exports = {
         !error ? resolve(result) : reject(new Error(error))
       })
     })
-  }
+  },
+  getChatByUserId: (room_chat_id) => {
+    return new Promise((resolve, reject) => {
+      connection.query(`SELECT * from chat where room_chat_id = ${room_chat_id} `, (error, result) => {
+        !error ? resolve(result) : reject(new Error(error))
+      })
+    })
+  },
+  getChatByRoomId: (room_chat_id) => {
+    return new Promise((resolve, reject) => {
+      connection.query(`SELECT * from chat where room_chat_id = ${room_chat_id} `, (error, result) => {
+        !error ? resolve(result) : reject(new Error(error))
+      })
+    })
+  },
+  postChat: (setData) => {
+    return new Promise((resolve, reject) => {
+      connection.query(
+        "INSERT INTO chat SET ?",
+        setData,
+        (error, result) => {
+          if (!error) {
+            const newResult = {
+              chat_id: result.insertId,
+              ...setData,
+            };
+            resolve(newResult);
+          } else {
+            reject(new Error(error));
+          }
+        }
+      );
+    });
+  },
 };
