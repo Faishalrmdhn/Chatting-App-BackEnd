@@ -15,21 +15,39 @@ const io = socket(server);
 
 io.on("connection", (socket) => {
   console.log("Socket.io Connect !");
+//=====================================================
+  socket.on('setRoom', (data)=>{
+    socket.join(data.room_chat_id)
+    console.log('roomAwwal')
+  })
 
-  socket.on("globalMessage", (data) => {
-    io.emit("chatMessage", data);
+  socket.on("changeRoom", (data)=>{
+    socket.leave(data[1])
+    socket.join(data[0])
+    console.log('room baru')
+  })
+
+  socket.on("roomMessage", (data) => {
+    socket.join(data.room);
+    socket.leave()
+    io.to(data.room).emit("chatMessage", data);
+    // console.log(data)
   });
+//====================================================
+  // socket.on("globalMessage", (data) => {
+  //   io.emit("chatMessage", data);
+  // });
 
-  socket.on("privateMessage", (data) => {
-    socket.emit("chatMessage", data);
-  });
+  // socket.on("privateMessage", (data) => {
+  //   socket.emit("chatMessage", data);
+  // });
 
-  socket.on("broadcastMessage", (data) => {
-    socket.broadcast.emit("chatMessage", data);
-  });
+  // socket.on("broadcastMessage", (data) => {
+  //   socket.broadcast.emit("chatMessage", data);
+  // });
 
-  socket.on("welcomeMessage", (data) => {
-    socket.emit("chatMessage", data)
+  // socket.on("welcomeMessage", (data) => {
+  //   socket.emit("chatMessage", data)
   
   // GLOBAL;
   // socket.broadcast.emit("chatMessage", {
@@ -37,20 +55,17 @@ io.on("connection", (socket) => {
   //   message: `${data.username} Joined Chat !`,
   // });
    // SPESIFIK
-  socket.join(data.room);
-  socket.broadcast.to(data.room).emit("chatMessage", {
-    username: "BOT",
-    message: `${data.username} Joined Chat !`,
-  });
-  });
+  // socket.join(data.room);
+  // socket.broadcast.to(data.room).emit("chatMessage", {
+  //   username: "BOT",
+  //   message: `${data.username} Joined Chat !`,
+  // });
+  // });
 
-  socket.on("typing", (data) => {
-    socket.broadcast.emit("typingMessage", data);
-  });
+  // socket.on("typing", (data) => {
+  //   socket.broadcast.emit("typingMessage", data);
+  // });
 
-  socket.on("roomMessage", (data) => {
-    io.to(data.room).emit("chatMessage", data);
-  });
 });
 // =======================================
 app.use(cors());
