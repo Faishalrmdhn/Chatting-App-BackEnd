@@ -282,12 +282,6 @@ module.exports = {
         user_updated_at: new Date(),
       };
 
-      // if (user_name === "") {
-      //   return helper.response(response, 400, "Name cannot be empty");
-      // } else if (user_phone === "") {
-      //   return helper.response(response, 400, "Phone cannot be empty");
-      // }
-
       const checkId = await getUserById(id);
       console.log(checkId.length);
 
@@ -313,12 +307,13 @@ module.exports = {
         profileImage: request.file === undefined ? "" : request.file.filename,
       }
       const checkId = await getUserById(id)
-      // console.log(checkId)
+      console.log(checkId[0].profileImage)
       if (checkId.length > 0) {
-        if (checkId[0].profileImage === '' || checkId[0].profileImage === "default.png" || request.file === undefined) {
+        if (checkId[0].profileImage === ''  || checkId[0].profileImage === "default.png" || request.file === undefined) {
           const result = await patchUser(setData, id);
           return helper.response(response, 201, "Profile Updated", result);
         } else {
+          console.log('masuk else')
           fs.unlink(`./uploads/${checkId[0].profileImage}`, async (error) => {
             if (error) {
               throw error;

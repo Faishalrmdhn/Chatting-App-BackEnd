@@ -38,10 +38,10 @@ module.exports = {
       );
     });
   },
-  checkRoomByKey: (uniqueKey) => {
+  checkRooms: (user_id, friend_id) => {
     return new Promise((resolve, reject) => {
       connection.query(
-        `SELECT * from room where room_chat_id = ${uniqueKey}`,
+        `SELECT * from room where user_id = ${user_id} and friend_id = ${friend_id}`,
         (error, result) => {
           !error ? resolve(result) : reject(new Error(error));
         }

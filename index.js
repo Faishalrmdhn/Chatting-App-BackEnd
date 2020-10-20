@@ -1,17 +1,14 @@
 require("dotenv").config();
 const express = require("express");
-
 const bodyParser = require("body-parser");
 const morgan = require("morgan");
 const cors = require("cors");
 const routerNavigation = require("./src/router_navigation");
+
 const app = express();
-// =======================================
 const socket = require("socket.io");
-// // =======================================
 app.use(cors());
 
-// =======================================
 const http = require("http");
 const server = http.createServer(app);
 const io = socket(server);
@@ -33,27 +30,27 @@ io.on("connection", (socket) => {
 
   socket.on("welcomeMessage", (data) => {
     socket.emit("chatMessage", data)
-  })
+  
   // GLOBAL;
   // socket.broadcast.emit("chatMessage", {
   //   username: "BOT",
   //   message: `${data.username} Joined Chat !`,
   // });
-  // // SPESIFIK
-  // socket.join(data.room);
-  // socket.broadcast.to(data.room).emit("chatMessage", {
-  //   username: "BOT",
-  //   message: `${data.username} Joined Chat !`,
-  // });
-  // });
+   // SPESIFIK
+  socket.join(data.room);
+  socket.broadcast.to(data.room).emit("chatMessage", {
+    username: "BOT",
+    message: `${data.username} Joined Chat !`,
+  });
+  });
 
-  // socket.on("typing", (data) => {
-  //   socket.broadcast.emit("typingMessage", data);
-  // });
+  socket.on("typing", (data) => {
+    socket.broadcast.emit("typingMessage", data);
+  });
 
-  // socket.on("roomMessage", (data) => {
-  //   io.to(data.room).emit("chatMessage", data);
-  // });
+  socket.on("roomMessage", (data) => {
+    io.to(data.room).emit("chatMessage", data);
+  });
 });
 // =======================================
 app.use(cors());

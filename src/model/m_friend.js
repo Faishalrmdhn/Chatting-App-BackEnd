@@ -30,4 +30,15 @@ module.exports = {
       );
     });
   },
+  getFriendById: (id, friend_id) => {
+    return new Promise((resolve, reject) => {
+      connection.query(
+        `SELECT friends.friend_id, user.user_name,user.user_phone, user.user_bio,user.profileImage FROM friends JOIN user ON friends.friend_id = user.user_id WHERE friends.user_id = ${id} AND friends.friend_id = ${friend_id}`,
+        id,
+        (error, result) => {
+          !error ? resolve(result) : reject(new Error(error));
+        }
+      );
+    });
+  },
 };

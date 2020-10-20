@@ -1,5 +1,5 @@
 const helper = require("../helper/helper");
-const { getAllRoom, getRoomById, postRoom, checkRoomByKey, checkRoomById, getChatByUserId,getMessageChatByRoom, postChat } = require("../model/m_roomChat");
+const { getAllRoom, getRoomById, postRoom, checkRooms, checkRoomById, getChatByUserId,getMessageChatByRoom, postChat } = require("../model/m_roomChat");
 const {getUserById} = require('../model/m_user')
 module.exports = {
   getAllRoom: async (request, response) => {
@@ -55,14 +55,15 @@ module.exports = {
       friend_id: user_id,
       room_chat_id: key,
     };
-
+    console.log(setData)
+    console.log(setData2)
     try {
-      const checkRoom = await checkRoomByKey(uniqueKey)
-      // console.log(checkRoom.length)
+      const checkRoom = await checkRooms(user_id, friend_id)
+      console.log(checkRoom.length)
       // console.log(result)
       // console.log(result2)
-      if (checkRoom.length <= 2) {
-        console.log(checkRoom.length)
+      if (checkRoom.length > 0) {
+      
         return helper.response(response, 404, 'You already have this room chat for this user! ')
       } else {
         const result = await postRoom(setData);
@@ -78,6 +79,11 @@ module.exports = {
   },
   postChat: async (request, reponse) => {
     const { user_id, friend_id, room_chat_id, chat } = request.body
+    if (chat === "") {
+      return helper.response(response, 400, "Input Your Message");
+    } else if (user_id === friend_id) {
+      return helper.response(response, 400, "Failed");
+    }
     try {
       const checkRoom = await checkRoomById(room_chat_id)
       const setData = {
@@ -113,12 +119,12 @@ console.log(checkRoom)
         checkRoom
       );
     }
-    // try {
-    //   const resultGetRoom = await getAllRoom(user_id);
-    //   // console.log(resultGetRoom);
-    //   return helper.response(response, 200, "Success Get Room!", resultGetRoom);
-    // } catch (error) {
-    //   return helper.response(response, 400, "Bad Request");
-    // }
+    try {
+      const resultGetRoom = await getAllRoom(user_id);
+      // console.log(resultGetRoom);
+      return helper.response(response, 200, "Success Get Room!", resultGetRoom);
+    } catch (error) {
+      return helper.response(response, 400, "Bad Request");
+    }
   },
 };
