@@ -12,6 +12,7 @@ const {
   searchUserByName,
   searchUserByEmail,
   searchUserFriendList,
+  deleteImageUser
 } = require("../model/m_user");
 
 module.exports = {
@@ -351,4 +352,34 @@ module.exports = {
       return helper.response(response, 400, "Bad request", error);
     }
   },
+  deleteImageUser: async (request, response) => {
+    try {
+      // let fs = require("fs");
+      const { id } = request.params;
+      console.log(id)
+      const checkUser = await getUserById(id);
+      if (checkUser.length > 0) {
+        fs.unlink(`./uploads/${checkUser[0].profileImage}`, function (
+          error,
+          result
+        ) {
+          if (!error) {
+            console.log(result);
+          } else {
+            console.log(error);
+          }
+        });
+        const result = await deleteImageUser(id);
+        return helper.response(response, 201, "Image deleted", result);
+      } else {
+        return helper.response(
+          response,
+          404,
+          `Image By Id: ${id} unknown / has been deleted`
+        );
+      }
+    } catch (error) {
+      return helper.response(response, 400, "Bad Request", error);
+    }
+  }
 };

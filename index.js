@@ -19,12 +19,14 @@ io.on("connection", (socket) => {
   socket.on('setRoom', (data)=>{
     socket.join(data.room_chat_id)
     console.log('roomAwwal')
+    console.log(data)
   })
 
   socket.on("changeRoom", (data)=>{
     socket.leave(data[1])
     socket.join(data[0])
     console.log('room baru')
+    console.log(data)
   })
 
   socket.on("roomMessage", (data) => {

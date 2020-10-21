@@ -64,24 +64,6 @@ module.exports = {
       );
     });
   },
-  // patchUser: (updateData, id) => {
-  //   return new Promise((resolve, reject) => {
-  //     connection.query(
-  //       "UPDATE user SET ? WHERE user_id = ?",
-  //       [updateData, id],
-  //       (error, result) => {
-  //         if (!error) {
-  //           const newResult = {
-  //             ...updateData,
-  //           };
-  //           resolve(newResult);
-  //         } else {
-  //           reject(new Error(error));
-  //         }
-  //       }
-  //     );
-  //   });
-  // },
   getUserById: (id) => {
     return new Promise((resolve, reject) => {
       connection.query(
@@ -131,6 +113,21 @@ module.exports = {
     return new Promise((resolve, reject) => {
       connection.query(
         "SELECT friends.friend_id, user.user_name, user.user_email,  user.profileImage, user.user_phone FROM user JOIN friends ON friends.friend_id = user.user_id WHERE friends.user_id = ?",
+        user_id,
+        (error, result) => {
+          if (!error) {
+            resolve(result);
+          } else {
+            reject(new Error(error));
+          }
+        }
+      );
+    });
+  },
+  deleteImageUser: (user_id) => {
+    return new Promise((resolve, reject) => {
+      connection.query(
+        `UPDATE user SET profileImage = '' WHERE user_id = ${user_id}`,
         user_id,
         (error, result) => {
           if (!error) {
