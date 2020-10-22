@@ -30,10 +30,10 @@ io.on("connection", (socket) => {
   })
 
   socket.on("roomMessage", (data) => {
-    socket.join(data.room);
+    socket.join(data.room_chat_id);
     socket.leave()
-    io.to(data.room).emit("chatMessage", data);
-    // console.log(data)
+    io.to(data.room_chat_id).emit("chatMessage", data);
+    console.log(data)
   });
 //====================================================
   // socket.on("globalMessage", (data) => {

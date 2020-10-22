@@ -77,7 +77,7 @@ module.exports = {
       return helper.response(response, 400, "Bad Request");
     }
   },
-  postChat: async (request, reponse) => {
+  postChat: async (request, response) => {
     const { user_id, friend_id, room_chat_id, chat } = request.body
     if (chat === "") {
       return helper.response(response, 400, "Input Your Message");
@@ -92,7 +92,18 @@ module.exports = {
         friend_id,
         chat,
       };
+      const setData2 = {
+        room_chat_id: checkRoom[0].room_chat_id,
+        user_id :friend_id,
+        friend_id : user_id,
+        chat
+      }
       const result = await postChat(setData)
+      // const result2 = await postChat(setData2)
+      // const result3 = {
+      //   ...result,...result2
+      // }
+      
       return helper.response(response, 200, "Success send chat", result)
     } catch (error) {
       console.log(error)
@@ -100,17 +111,18 @@ module.exports = {
     }
   },
   getRoomChat: async (request, response) => {
+    try {
     const {id} = request.params
     const checkRoom = await checkRoomById(id)
-    // console.log(checkRoom)
+    console.log(checkRoom)
     if (checkRoom.length > 0) {
       const getData = await getChatByUserId(id);
-
+      console.log(getData)
       for (i = 0; i < getData.length; i++) {
         const getSender = await getUserById(getData[i].user_id);
         getData[i].sender = getSender[0].user_name;
       }
-console.log(checkRoom)
+      // console.log(getSender)
       checkRoom[0].chat = getData;
       return helper.response(
         response,
@@ -118,13 +130,12 @@ console.log(checkRoom)
         `Success get room chat by ID ${id}`,
         checkRoom
       );
+    } else{
+      return helper.response(response, 404, "Room is unavailable");
     }
-    try {
-      const resultGetRoom = await getAllRoom(user_id);
-      // console.log(resultGetRoom);
-      return helper.response(response, 200, "Success Get Room!", resultGetRoom);
-    } catch (error) {
-      return helper.response(response, 400, "Bad Request");
-    }
+  }catch (error) {
+    return helper.response(response, 400, "Bad Request");
+  }
+  
   },
 };
