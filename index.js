@@ -93,10 +93,10 @@ app.get("*", (request, response) => {
 // app.listen(3001, "127.0.0.1", () => {
 //   // =======================================
 //   console.log(
-//     "Express app is listening on host :127.0.0.1 and port listening on Port 3001"
+//     "Express app is listening on host :127.0.0.1 and listening on Port 3001"
 //   );
 // });
 
-server.listen(3000, () => {
+server.listen(process.env.PORT, () => {
   console.log("listening on port 3000");
 });
