@@ -1,21 +1,20 @@
 const helper = require("../helper/helper");
-const { getAllRoom, getRoomById, postRoom, checkRooms, checkRoomById, getChatByUserId,getMessageChatByRoom, postChat } = require("../model/m_roomChat");
+const { getAllRoom, getRoomById, postRoom, checkRooms, checkRoomById, getChatByUserId,getMessageChatByRoom, postChat,getLastChat } = require("../model/m_roomChat");
 const {getUserById} = require('../model/m_user')
 module.exports = {
   getAllRoom: async (request, response) => {
-    const { user_id } = request.body;
-    // const setData = {
-    //   user_id: user_id,
-    //   friend_id: friend_id,
-    // };
-    // const setData2 = {
-    //   user_id: friend_id,
-    //   friend_id: user_id,
-    // };
+    const { user_id } = request.body; //room_chat_id 
+    
+    let allRoom = await getAllRoom(user_id);
+    let lastChat = await getLastChat()
+    const result = {
+      allRoom, lastChat
+      }
+    //   console.log(result)
+    //   console.log(lastChat)
     try {
-      const resultGetRoom = await getAllRoom(user_id);
-      // console.log(resultGetRoom);
-      return helper.response(response, 200, "Success Get Room!", resultGetRoom);
+      return helper.response(response, 200, "Success Get Room!", result);
+      
     } catch (error) {
       return helper.response(response, 400, "Bad Request");
     }
@@ -92,12 +91,12 @@ module.exports = {
         friend_id,
         chat,
       };
-      const setData2 = {
-        room_chat_id: checkRoom[0].room_chat_id,
-        user_id :friend_id,
-        friend_id : user_id,
-        chat
-      }
+      // const setData2 = {
+      //   room_chat_id: checkRoom[0].room_chat_id,
+      //   user_id :friend_id,
+      //   friend_id : user_id,
+      //   chat
+      // }
       const result = await postChat(setData)
       // const result2 = await postChat(setData2)
       // const result3 = {

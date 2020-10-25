@@ -88,4 +88,15 @@ module.exports = {
       );
     });
   },
+  getLastChat: () => {
+    return new Promise((resolve, reject) => {
+      connection.query(
+        `select * from chat where chat_id in
+        (select max(chat_id) from chat group by room_chat_id)`,
+        (error, result) => {
+          !error ? resolve(result) : reject(new Error(error))
+        }
+      );
+    });
+  },
 };

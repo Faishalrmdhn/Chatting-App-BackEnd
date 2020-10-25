@@ -7,9 +7,8 @@ const {
   postChat,
 } = require("../controller/c_roomChat");
 
-
-router.get('/roomchat/:id', getRoomChat)
 router.post("/all", getAllRoom);
+router.get('/roomchat/:id', getRoomChat)
 router.post("/chat/by-id", getRoomById);
 
 router.post("/post", postRoom);
