@@ -35,39 +35,6 @@ io.on("connection", (socket) => {
     io.to(data.room_chat_id).emit("chatMessage", data);
     console.log(data)
   });
-//====================================================
-  // socket.on("globalMessage", (data) => {
-  //   io.emit("chatMessage", data);
-  // });
-
-  // socket.on("privateMessage", (data) => {
-  //   socket.emit("chatMessage", data);
-  // });
-
-  // socket.on("broadcastMessage", (data) => {
-  //   socket.broadcast.emit("chatMessage", data);
-  // });
-
-  // socket.on("welcomeMessage", (data) => {
-  //   socket.emit("chatMessage", data)
-  
-  // GLOBAL;
-  // socket.broadcast.emit("chatMessage", {
-  //   username: "BOT",
-  //   message: `${data.username} Joined Chat !`,
-  // });
-   // SPESIFIK
-  // socket.join(data.room);
-  // socket.broadcast.to(data.room).emit("chatMessage", {
-  //   username: "BOT",
-  //   message: `${data.username} Joined Chat !`,
-  // });
-  // });
-
-  // socket.on("typing", (data) => {
-  //   socket.broadcast.emit("typingMessage", data);
-  // });
-
 });
 // =======================================
 app.use(cors());
@@ -88,14 +55,6 @@ app.use("/", routerNavigation);
 app.get("*", (request, response) => {
   response.status(404).send("Path Not Found");
 });
-
-// =======================================
-// app.listen(3001, "127.0.0.1", () => {
-//   // =======================================
-//   console.log(
-//     "Express app is listening on host :127.0.0.1 and listening on Port 3001"
-//   );
-// });
 
 server.listen(process.env.PORT, () => {
   console.log(`listening on port ${process.env.PORT}`);
